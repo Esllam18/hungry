@@ -4,7 +4,6 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hungry/core/consts/app_colors.dart';
 import 'package:hungry/core/functions/validators.dart';
-import 'package:hungry/core/router/route_names.dart';
 import 'package:hungry/core/utils/responsive_helper.dart';
 import 'package:hungry/core/widgets/custom_button.dart';
 import 'package:hungry/core/widgets/custom_text.dart';
@@ -21,6 +20,7 @@ class SignupForm extends StatelessWidget {
     required TextEditingController emailController,
     required TextEditingController passwordController,
     required TextEditingController confirmPasswordController,
+    required this.onPressed,
   }) : _formKey = formKey,
        _fadeAnimation = fadeAnimation,
        _slideAnimation = slideAnimation,
@@ -37,6 +37,7 @@ class SignupForm extends StatelessWidget {
   final TextEditingController _emailController;
   final TextEditingController _passwordController;
   final TextEditingController _confirmPasswordController;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -148,13 +149,7 @@ class SignupForm extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
                             ),
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                GoRouter.of(
-                                  context,
-                                ).pushReplacement(RouteNames.root);
-                              }
-                            },
+                            onPressed: onPressed,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.white,
                               elevation: 4,

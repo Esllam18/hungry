@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hungry/core/consts/app_colors.dart';
 import 'package:hungry/core/utils/responsive_helper.dart';
 import 'package:hungry/features/checkout/widgets/payment_method_card.dart';
@@ -89,9 +88,11 @@ class _ProfilViewState extends State<ProfilView> with TickerProviderStateMixin {
                 margin: const EdgeInsets.only(right: 15, top: 8, bottom: 8),
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
+                  // ignore: deprecated_member_use
                   color: Colors.white.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
+                    // ignore: deprecated_member_use
                     color: Colors.white.withOpacity(0.3),
                     width: 1,
                   ),
@@ -133,9 +134,11 @@ class _ProfilViewState extends State<ProfilView> with TickerProviderStateMixin {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
+                          // ignore: deprecated_member_use
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
+                            // ignore: deprecated_member_use
                             color: Colors.white.withOpacity(0.3),
                             width: 1,
                           ),
@@ -168,6 +171,7 @@ class _ProfilViewState extends State<ProfilView> with TickerProviderStateMixin {
                           borderRadius: BorderRadius.circular(25),
                           boxShadow: [
                             BoxShadow(
+                              // ignore: deprecated_member_use
                               color: Colors.black.withOpacity(0.1),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
@@ -186,6 +190,7 @@ class _ProfilViewState extends State<ProfilView> with TickerProviderStateMixin {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
+                              // ignore: deprecated_member_use
                               AppColors.primary.withOpacity(0.3),
                               Colors.transparent,
                             ],
@@ -212,6 +217,7 @@ class _ProfilViewState extends State<ProfilView> with TickerProviderStateMixin {
                               responsive: responsive,
                               title: 'Debit card',
                               subtitle: '3566 **** **** 0505',
+                              // ignore: unrelated_type_equality_checks
                               isSelected: selectedPayment == 'card',
                               textColor: AppColors.black,
                               backgroundColor: Colors.white,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hungry/core/router/app_router.dart';
+import 'package:hungry/features/auth/persantation/cubit/auth_cubit.dart';
 
 void main() {
   runApp(const Hungry());
@@ -16,10 +18,13 @@ class Hungry extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp.router(
-          title: 'Hungry',
-          debugShowCheckedModeBanner: false,
-          routerConfig: router,
+        return MultiBlocProvider(
+          providers: [BlocProvider(create: (context) => AuthCubit())],
+          child: MaterialApp.router(
+            title: 'Hungry',
+            debugShowCheckedModeBanner: false,
+            routerConfig: router,
+          ),
         );
       },
     );

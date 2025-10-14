@@ -20,6 +20,7 @@ class LoginForm extends StatelessWidget {
     required Animation<Offset> slideAnimation,
     required TextEditingController emailController,
     required TextEditingController passwordController,
+    required this.onPressed,
   }) : _formKey = formKey,
        _fadeAnimation = fadeAnimation,
        _slideAnimation = slideAnimation,
@@ -32,6 +33,7 @@ class LoginForm extends StatelessWidget {
   final Animation<Offset> _slideAnimation;
   final TextEditingController _emailController;
   final TextEditingController _passwordController;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +103,6 @@ class LoginForm extends StatelessWidget {
                           obscureText: true,
                           keyboardType: TextInputType.visiblePassword,
                           prefixIcon: CupertinoIcons.lock_fill,
-                          validator: AppValidators.validatePassword,
                         ),
 
                         Row(
@@ -138,11 +139,7 @@ class LoginForm extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
                             ),
-                            onPressed: () {
-                              GoRouter.of(
-                                context,
-                              ).pushReplacement(RouteNames.root);
-                            },
+                            onPressed: onPressed,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.white,
                               elevation: 4,
