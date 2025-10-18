@@ -2,38 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:hungry/core/consts/app_colors.dart';
 import 'package:hungry/core/utils/responsive_helper.dart';
 import 'package:hungry/core/widgets/custom_text.dart';
-import 'package:hungry/features/home/data/datasources/remote_datasources.dart';
+import 'package:hungry/features/home/data/models/category_model.dart';
 
-class FilterationShipsChoise extends StatefulWidget {
-  const FilterationShipsChoise({super.key});
+class CategoriesFiltertion extends StatelessWidget {
+  final List<CategoryModel> categories;
+  final int? selectedCategoryId;
+  final Function(int?) onCategorySelected;
 
-  @override
-  State<FilterationShipsChoise> createState() => _FilterationShipsChoiseState();
-}
-
-class _FilterationShipsChoiseState extends State<FilterationShipsChoise> {
-  int selectedIndex = 0;
+  const CategoriesFiltertion({
+    super.key,
+    required this.categories,
+    this.selectedCategoryId,
+    required this.onCategorySelected,
+  });
 
   @override
   Widget build(BuildContext context) {
     final responsive = Responsive(context);
 
+    // Add "All" category at the beginning
+    final allCategories = [CategoryModel(id: 0, name: 'All'), ...categories];
+
     return SizedBox(
       height: responsive.setHeight(45),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: categories.length,
+        itemCount: allCategories.length,
         itemBuilder: (context, index) {
-          final category = categories[index];
-          final isSelected = index == selectedIndex;
+          final category = allCategories[index];
+
+          // Check if this category is selected
+          final isSelected =
+              (category.id == 0 && selectedCategoryId == null) ||
+              (category.id == selectedCategoryId);
 
           return Padding(
             padding: EdgeInsets.only(right: responsive.setWidth(10)),
             child: GestureDetector(
               onTap: () {
-                setState(() {
-                  selectedIndex = index;
-                });
+                // If "All" is clicked, pass null, otherwise pass category id
+                final categoryIdToSelect = category.id == 0
+                    ? null
+                    : category.id;
+                onCategorySelected(categoryIdToSelect);
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
@@ -62,7 +73,7 @@ class _FilterationShipsChoiseState extends State<FilterationShipsChoise> {
                 ),
                 child: Center(
                   child: CustomText(
-                    txt: category,
+                    txt: category.name,
                     fontSize: responsive.setFont(14),
                     fontWeight: FontWeight.w600,
                     color: isSelected ? AppColors.white : AppColors.textPrimary,

@@ -11,13 +11,24 @@ class CustomTextField extends StatelessWidget {
     this.label,
     this.hint,
     this.controller,
+    this.onChanged,
+    this.onSubmitted,
+    this.enabled = true,
+    this.maxLines = 1,
+    this.obscureText = false,
   });
+
   final Widget? prefix;
   final Widget? suffix;
   final TextInputType? keyboardType;
   final Widget? label;
   final Widget? hint;
   final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final bool enabled;
+  final int maxLines;
+  final bool obscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -29,40 +40,52 @@ class CustomTextField extends StatelessWidget {
         style: TextStyle(
           fontSize: 18.sp,
           fontWeight: FontWeight.w500,
-          color: Color(0xff3C2F2F),
+          color: const Color(0xff3C2F2F),
         ),
         controller: controller,
         keyboardType: keyboardType,
-        cursorColor: Color(0xff3C2F2F),
+        cursorColor: const Color(0xff3C2F2F),
         cursorHeight: 22.h,
-
+        onChanged: onChanged,
+        onSubmitted: onSubmitted,
+        enabled: enabled,
+        maxLines: maxLines,
+        obscureText: obscureText,
         decoration: InputDecoration(
           prefixIcon: prefix,
           suffixIcon: suffix,
-
           focusColor: AppColors.background,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(color: AppColors.white),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.white),
+            borderSide: BorderSide(color: AppColors.primary, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: AppColors.white),
+            borderSide: BorderSide(color: Colors.red.shade300),
           ),
-          fillColor: AppColors.background,
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: AppColors.mediumGrey.withOpacity(0.3),
+            ),
+          ),
+          fillColor: AppColors.white,
+          filled: true,
           label: label,
-
-          hint: hint,
+          hintText: hint is Text ? (hint as Text).data : null,
           hintStyle: TextStyle(
-            fontSize: 18.sp,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w500,
-            color: Color(0xff3C2F2F),
+            color: const Color(0xff3C2F2F).withOpacity(0.5),
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 16.w,
+            vertical: 14.h,
           ),
         ),
       ),

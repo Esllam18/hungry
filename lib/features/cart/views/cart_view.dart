@@ -53,7 +53,8 @@ class CartView extends StatelessWidget {
               right: 0,
               bottom: 0,
               child: AddToCartBtnAndTotalPrice(
-                onTap: () => GoRouter.of(context).push(RouteNames.checkoutView),
+                onPressed: () =>
+                    GoRouter.of(context).push(RouteNames.checkoutView),
 
                 text: 'Checkout',
                 responsive: responsive,

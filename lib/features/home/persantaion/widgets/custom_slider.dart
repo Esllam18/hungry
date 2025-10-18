@@ -1,3 +1,4 @@
+// Fixed custom_slider.dart - No changes needed.
 import 'package:flutter/material.dart';
 
 class CustomSlider extends StatefulWidget {
@@ -40,7 +41,6 @@ class _CustomSliderState extends State<CustomSlider> {
         activeTrackColor: widget.activeColor,
         inactiveTrackColor: widget.inactiveColor,
         trackHeight: 6,
-
         thumbColor: Colors.white,
         overlayColor: widget.activeColor.withOpacity(0.2),
         valueIndicatorColor: widget.activeColor,

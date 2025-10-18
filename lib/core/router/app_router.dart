@@ -29,7 +29,8 @@ final router = GoRouter(
     ),
     GoRoute(
       path: RouteNames.productDetails,
-      builder: (context, state) => const ProductDetailsView(), // Added const
+      builder: (context, state) =>
+          ProductDetailsView(productId: state.extra.toString()), // Added const
     ),
     GoRoute(
       path: RouteNames.checkoutView,

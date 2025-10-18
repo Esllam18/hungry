@@ -1,3 +1,4 @@
+// Fixed food_topping_card.dart - No changes needed.
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
@@ -113,7 +114,7 @@ class _FoodToppingCardState extends State<FoodToppingCard>
                     ),
                   ),
                   child: Center(
-                    child: Image.asset(
+                    child: Image.network(
                       widget.image,
                       width: widget.imageWidth.w,
                       height: widget.imageHeight.h,

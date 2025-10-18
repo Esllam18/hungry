@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // Add for BlocProvider
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hungry/core/consts/app_assets.dart';
 import 'package:hungry/core/consts/app_colors.dart';
 import 'package:hungry/core/router/route_names.dart';
+import 'package:hungry/features/auth/persantation/cubit/auth_cubit.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -22,15 +24,33 @@ class _SplashViewState extends State<SplashView> {
 
     // Start animation
     Timer(const Duration(milliseconds: 300), () {
-      setState(() {
-        _opacity = 1.0;
-      });
+      if (mounted) {
+        setState(() {
+          _opacity = 1.0;
+        });
+      }
     });
 
-    // Navigate after 3 seconds
-    Timer(const Duration(seconds: 3), () {
-      GoRouter.of(context).go(RouteNames.login);
-    });
+    // Check authentication and navigate
+    _checkAuthAndNavigate();
+  }
+
+  Future<void> _checkAuthAndNavigate() async {
+    // Wait for splash duration
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (!mounted) return;
+
+    // Check if user is logged in using the provided AuthCubit
+    final isLoggedIn = await context.read<AuthCubit>().isLoggedIn();
+
+    if (mounted) {
+      if (isLoggedIn) {
+        GoRouter.of(context).go(RouteNames.root);
+      } else {
+        GoRouter.of(context).go(RouteNames.login);
+      }
+    }
   }
 
   @override

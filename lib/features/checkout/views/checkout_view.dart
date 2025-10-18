@@ -135,7 +135,7 @@ class _CheckoutViewState extends State<CheckoutView>
                 child: AddToCartBtnAndTotalPrice(
                   text: 'Pay Now',
                   responsive: responsive,
-                  onTap: () => showDialog(
+                  onPressed: () => showDialog(
                     context: context,
                     builder: (context) => DialogScauss(),
                   ),

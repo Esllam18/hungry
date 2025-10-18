@@ -1,57 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hungry/core/consts/app_colors.dart';
 import 'package:hungry/core/utils/responsive_helper.dart';
-import 'package:hungry/core/widgets/custom_text.dart';
-import 'package:hungry/features/home/persantaion/widgets/add_to_cart_and_total_price.dart';
-import 'package:hungry/features/home/persantaion/widgets/header_for_detaile.dart';
-import 'package:hungry/features/home/persantaion/widgets/toppings_list_view.dart';
+import 'package:hungry/core/widgets/custom_snackbar.dart';
+import 'package:hungry/core/widgets/loading_widget.dart';
+import 'package:hungry/features/home/persantaion/cubit/product_cubit.dart';
+import 'package:hungry/features/home/persantaion/cubit/product_state.dart';
+import 'package:hungry/features/home/persantaion/widgets/product_details_content.dart';
+import 'package:hungry/features/home/persantaion/widgets/product_details_error.dart';
 
 class ProductDetailsView extends StatefulWidget {
-  const ProductDetailsView({super.key});
+  final String productId;
+
+  const ProductDetailsView({super.key, required this.productId});
 
   @override
   State<ProductDetailsView> createState() => _ProductDetailsViewState();
 }
 
-class _ProductDetailsViewState extends State<ProductDetailsView>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
+class _ProductDetailsViewState extends State<ProductDetailsView> {
+  Set<int> selectedToppings = {};
+  Set<int> selectedSideOptions = {};
+  double spicyLevel = 0.5;
 
   @override
   void initState() {
     super.initState();
-    _setupAnimations();
+    _loadProductData();
   }
 
-  void _setupAnimations() {
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
-    );
-
-    _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
-          CurvedAnimation(
-            parent: _animationController,
-            curve: Curves.easeOutCubic,
-          ),
-        );
-
-    _animationController.forward();
+  void _loadProductData() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final productId = int.tryParse(widget.productId);
+      if (productId != null) {
+        context.read<ProductCubit>().getProductDetails(productId);
+      }
+    });
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+  void _toggleTopping(int id) {
+    setState(() {
+      if (selectedToppings.contains(id)) {
+        selectedToppings.remove(id);
+      } else {
+        selectedToppings.add(id);
+      }
+    });
+  }
+
+  void _toggleSideOption(int id) {
+    setState(() {
+      if (selectedSideOptions.contains(id)) {
+        selectedSideOptions.remove(id);
+      } else {
+        selectedSideOptions.add(id);
+      }
+    });
+  }
+
+  void _updateSpicyLevel(double value) {
+    setState(() {
+      spicyLevel = value;
+    });
   }
 
   @override
@@ -75,155 +86,48 @@ class _ProductDetailsViewState extends State<ProductDetailsView>
             ),
           ),
         ),
-        body: Stack(
-          children: [
-            AnimatedBuilder(
-              animation: _animationController,
-              builder: (context, child) {
-                return FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: CustomScrollView(
-                    slivers: [
-                      // Header Section
-                      SliverToBoxAdapter(
-                        child: SlideTransition(
-                          position: _slideAnimation,
-                          child: Padding(
-                            padding: EdgeInsets.all(responsive.setWidth(20)),
-                            child: Column(
-                              children: [
-                                Gap(responsive.setHeight(10)),
-                                CustomIzeOfDetaile(),
-                                Gap(responsive.setHeight(30)),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      // Toppings Section
-                      SliverToBoxAdapter(
-                        child: SlideTransition(
-                          position:
-                              Tween<Offset>(
-                                begin: const Offset(0, 0.3),
-                                end: Offset.zero,
-                              ).animate(
-                                CurvedAnimation(
-                                  parent: _animationController,
-                                  curve: const Interval(
-                                    0.3,
-                                    1.0,
-                                    curve: Curves.easeOut,
-                                  ),
-                                ),
-                              ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: responsive.setWidth(20),
-                            ),
-                            child: CustomText(
-                              txt: 'Toppings',
-                              fontSize: responsive.setFont(18),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      SliverToBoxAdapter(child: Gap(responsive.setHeight(20))),
-
-                      SliverToBoxAdapter(
-                        child: SlideTransition(
-                          position:
-                              Tween<Offset>(
-                                begin: const Offset(0, 0.3),
-                                end: Offset.zero,
-                              ).animate(
-                                CurvedAnimation(
-                                  parent: _animationController,
-                                  curve: const Interval(
-                                    0.4,
-                                    1.0,
-                                    curve: Curves.easeOut,
-                                  ),
-                                ),
-                              ),
-                          child: ToppingsListView(),
-                        ),
-                      ),
-
-                      SliverToBoxAdapter(child: Gap(responsive.setHeight(20))),
-
-                      // Side Options Section
-                      SliverToBoxAdapter(
-                        child: SlideTransition(
-                          position:
-                              Tween<Offset>(
-                                begin: const Offset(0, 0.3),
-                                end: Offset.zero,
-                              ).animate(
-                                CurvedAnimation(
-                                  parent: _animationController,
-                                  curve: const Interval(
-                                    0.5,
-                                    1.0,
-                                    curve: Curves.easeOut,
-                                  ),
-                                ),
-                              ),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: responsive.setWidth(20),
-                            ),
-                            child: CustomText(
-                              txt: 'Side options',
-                              fontSize: responsive.setFont(18),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      SliverToBoxAdapter(child: Gap(responsive.setHeight(20))),
-
-                      SliverToBoxAdapter(
-                        child: SlideTransition(
-                          position:
-                              Tween<Offset>(
-                                begin: const Offset(0, 0.3),
-                                end: Offset.zero,
-                              ).animate(
-                                CurvedAnimation(
-                                  parent: _animationController,
-                                  curve: const Interval(
-                                    0.6,
-                                    1.0,
-                                    curve: Curves.easeOut,
-                                  ),
-                                ),
-                              ),
-                          child: SideOptionsListView(),
-                        ),
-                      ),
-
-                      SliverToBoxAdapter(child: Gap(responsive.setHeight(150))),
-                    ],
-                  ),
+        body: BlocConsumer<ProductCubit, ProductState>(
+          listener: (context, state) {
+            if (state is ProductError) {
+              CustomSnackBar.show(
+                context,
+                message: state.message,
+                type: SnackBarType.error,
+              );
+            } else if (state is ProductDetailsLoaded) {
+              if (state.toppings.isNotEmpty || state.sideOptions.isNotEmpty) {
+                CustomSnackBar.show(
+                  context,
+                  message: 'Options loaded successfully!',
+                  type: SnackBarType.success,
                 );
-              },
-            ),
-            Positioned(
-              left: responsive.setWidth(0),
-              right: responsive.setWidth(0),
-              bottom: responsive.setHeight(0),
+              }
+            }
+          },
+          builder: (context, state) {
+            if (state is ProductLoading) {
+              return const Center(
+                child: LoadingWidget(variant: LoadingVariant.modern),
+              );
+            }
 
-              child: AddToCartBtnAndTotalPrice(
-                text: 'Add To Cart',
-                responsive: responsive,
-              ),
-            ),
-          ],
+            if (state is! ProductDetailsLoaded) {
+              return ProductDetailsError(responsive: responsive);
+            }
+
+            return ProductDetailsContent(
+              product: state.product,
+              selectedToppings: selectedToppings,
+              selectedSideOptions: selectedSideOptions,
+              spicyLevel: spicyLevel,
+              onToppingToggle: _toggleTopping,
+              onSideOptionToggle: _toggleSideOption,
+              onSpicyChanged: _updateSpicyLevel,
+              responsive: responsive,
+              toppings: state.toppings, // Pass toppings
+              sideOptions: state.sideOptions, // Pass side options
+            );
+          },
         ),
       ),
     );

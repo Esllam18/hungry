@@ -1,4 +1,3 @@
-// auth_state.dart (separate file or part)
 import 'package:hungry/features/auth/data/models/user_model.dart';
 
 abstract class AuthState {}

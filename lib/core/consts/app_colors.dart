@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// consistently-themed Flutter apps. Use AppColors for all color references in
 /// your widgets, themes, and styles to ensure easy updates and theming across projects.
 class AppColors {
-  static const Color primary = Color.fromARGB(255, 4, 106, 110);
+  static const Color primary = Color.fromARGB(255, 3, 30, 70);
   static const Color secondary = Color(0xff3C2F2F);
   static const Color accent = Color(0xff6A6A6A);
   static const Color white = Color(0xffFFFFFF);

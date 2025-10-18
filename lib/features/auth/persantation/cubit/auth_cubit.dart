@@ -1,11 +1,7 @@
+import 'package:hungry/core/api/pref_helper.dart';
 import 'package:hungry/features/auth/data/repositories/auth_repository.dart';
 import 'package:hungry/features/auth/persantation/cubit/auth_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-/// Cubit for state management.
-/// Emits states: Loading, Success, Error.
-/// Call from UI: context.read<AuthCubit>().login(email, password);
-/// Modify states as needed.
 
 class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _repository = AuthRepository();
@@ -18,7 +14,6 @@ class AuthCubit extends Cubit<AuthState> {
       final user = await _repository.login(email, password);
       emit(AuthSuccess(user));
     } catch (e) {
-      print(e);
       emit(AuthError(e.toString()));
     }
   }
@@ -41,7 +36,6 @@ class AuthCubit extends Cubit<AuthState> {
       );
       emit(AuthSuccess(user));
     } catch (e) {
-      print(e);
       emit(AuthError(e.toString()));
     }
   }
@@ -52,10 +46,13 @@ class AuthCubit extends Cubit<AuthState> {
       await _repository.logout();
       emit(AuthInitial()); // Reset to initial state on logout
     } catch (e) {
-      print(e);
       emit(AuthError(e.toString()));
     }
   }
 
-  // Add more actions
+  /// Check if a user is logged in by verifying the presence of a token
+  Future<bool> isLoggedIn() async {
+    final token = await PrefHelper.getToken();
+    return token != null && token.isNotEmpty;
+  }
 }

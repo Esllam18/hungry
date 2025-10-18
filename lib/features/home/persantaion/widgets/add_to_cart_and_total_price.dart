@@ -5,16 +5,18 @@ import 'package:hungry/core/utils/responsive_helper.dart';
 import 'package:hungry/core/widgets/custom_text.dart';
 
 class AddToCartBtnAndTotalPrice extends StatefulWidget {
+  final Responsive responsive;
+  final String text;
+  final double? totalPrice;
+  final VoidCallback? onPressed;
+
   const AddToCartBtnAndTotalPrice({
     super.key,
     required this.responsive,
     required this.text,
-    this.onTap,
+    this.totalPrice,
+    this.onPressed,
   });
-
-  final Responsive responsive;
-  final String text;
-  final Function()? onTap;
 
   @override
   State<AddToCartBtnAndTotalPrice> createState() =>
@@ -25,7 +27,6 @@ class _AddToCartBtnAndTotalPriceState extends State<AddToCartBtnAndTotalPrice>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  bool isPressed = false;
 
   @override
   void initState() {
@@ -53,6 +54,7 @@ class _AddToCartBtnAndTotalPriceState extends State<AddToCartBtnAndTotalPrice>
 
   void _handleTapUp(TapUpDetails details) {
     _controller.reverse();
+    widget.onPressed?.call();
   }
 
   void _handleTapCancel() {
@@ -113,7 +115,7 @@ class _AddToCartBtnAndTotalPriceState extends State<AddToCartBtnAndTotalPrice>
                         ),
                         Gap(widget.responsive.setWidth(2)),
                         CustomText(
-                          txt: '129.90',
+                          txt: (widget.totalPrice ?? 0.0).toStringAsFixed(2),
                           fontSize: widget.responsive.setFont(26),
                           fontWeight: FontWeight.w900,
                           color: AppColors.primary,
@@ -131,49 +133,45 @@ class _AddToCartBtnAndTotalPriceState extends State<AddToCartBtnAndTotalPrice>
                 onTapCancel: _handleTapCancel,
                 child: ScaleTransition(
                   scale: _scaleAnimation,
-                  child: GestureDetector(
-                    onTap: widget.onTap,
-
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: widget.responsive.setWidth(32),
-                        vertical: widget.responsive.setHeight(16),
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppColors.primary,
-                            AppColors.primary.withOpacity(0.85),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(
-                          widget.responsive.setWidth(16),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.4),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: widget.responsive.setWidth(32),
+                      vertical: widget.responsive.setHeight(16),
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primary,
+                          AppColors.primary.withOpacity(0.85),
                         ],
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.shopping_cart_outlined,
-                            color: AppColors.white,
-                            size: widget.responsive.setWidth(20),
-                          ),
-                          Gap(widget.responsive.setWidth(8)),
-                          CustomText(
-                            txt: widget.text,
-                            fontSize: widget.responsive.setFont(17),
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.white,
-                          ),
-                        ],
+                      borderRadius: BorderRadius.circular(
+                        widget.responsive.setWidth(16),
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.shopping_cart_outlined,
+                          color: AppColors.white,
+                          size: widget.responsive.setWidth(20),
+                        ),
+                        Gap(widget.responsive.setWidth(8)),
+                        CustomText(
+                          txt: widget.text,
+                          fontSize: widget.responsive.setFont(17),
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.white,
+                        ),
+                      ],
                     ),
                   ),
                 ),
