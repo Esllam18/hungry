@@ -5,7 +5,12 @@ import 'package:hungry/core/consts/app_colors.dart';
 import 'package:hungry/core/widgets/custom_text.dart';
 
 class ProfileBtn extends StatelessWidget {
-  const ProfileBtn({super.key, this.color, this.child});
+  const ProfileBtn({
+    super.key,
+    this.color,
+    this.child,
+    required Null Function() onTap,
+  });
   final Color? color;
   final Widget? child;
   @override

@@ -1,3 +1,4 @@
+// user_model.dart (updated address to nullable)
 class UserModel {
   final String name;
   final String email;

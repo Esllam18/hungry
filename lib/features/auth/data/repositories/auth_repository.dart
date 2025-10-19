@@ -33,4 +33,26 @@ class AuthRepository {
     // Add logic if needed (e.g., clear cache)
     return await _remoteDataSource.logout();
   }
+
+  Future<UserModel> getCurrentUser() async {
+    return await _remoteDataSource.getCurrentUser();
+  }
+
+  Future<UserModel> updateUser({
+    required String name,
+    required String email,
+    required String phone,
+    String? image,
+    String? address,
+    String? visa,
+  }) async {
+    return await _remoteDataSource.updateUser(
+      name: name,
+      email: email,
+      phone: phone,
+      image: image,
+      address: address,
+      visa: visa,
+    );
+  }
 }

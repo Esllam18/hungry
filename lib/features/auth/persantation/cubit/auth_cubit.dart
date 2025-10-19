@@ -55,4 +55,39 @@ class AuthCubit extends Cubit<AuthState> {
     final token = await PrefHelper.getToken();
     return token != null && token.isNotEmpty;
   }
+
+  /// Get the current user details
+  Future<void> getCurrentUser() async {
+    emit(AuthLoading());
+    try {
+      final user = await _repository.getCurrentUser();
+      emit(AuthSuccess(user));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+
+  Future<void> updateUser({
+    required String name,
+    required String email,
+    required String phone,
+    String? image,
+    String? address,
+    String? visa,
+  }) async {
+    emit(AuthLoading());
+    try {
+      final user = await _repository.updateUser(
+        name: name,
+        email: email,
+        phone: phone,
+        image: image,
+        address: address,
+        visa: visa,
+      );
+      emit(AuthSuccess(user));
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
 }

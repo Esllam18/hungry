@@ -106,4 +106,59 @@ class AuthRemoteDataSource {
     // Clear token on successful logout
     await PrefHelper.clearToken();
   }
+
+  // get current user details
+  Future<UserModel> getCurrentUser() async {
+    final response = await _apiService.get(ApiEndpoints.profile);
+
+    // Validate response structure
+    if (!_isSuccessful(response['code']) || response['data'] == null) {
+      throw ApiError(
+        response['message'] ?? 'Failed to fetch user details',
+        _parseCode(response['code']),
+      );
+    }
+
+    // Parse user model using only the 'data' part of the response
+    final user = UserModel.fromJson({'data': response['data']});
+
+    return user;
+  }
+
+  // update user details
+  Future<UserModel> updateUser({
+    String? name,
+    String? email,
+    String? phone,
+    String? image,
+    String? address,
+    String? visa,
+  }) async {
+    final data = {
+      if (name != null) 'name': name,
+      if (email != null) 'email': email,
+      if (phone != null) 'phone': phone,
+      if (image != null) 'image': image,
+      if (address != null) 'address': address,
+      if (visa != null) 'Visa': visa,
+    };
+
+    final response = await _apiService.post(
+      ApiEndpoints.updateProfile,
+      data: data,
+    );
+
+    // Validate response structure
+    if (!_isSuccessful(response['code']) || response['data'] == null) {
+      throw ApiError(
+        response['message'] ?? 'Failed to update user details',
+        _parseCode(response['code']),
+      );
+    }
+
+    // Parse user model using only the 'data' part of the response
+    final user = UserModel.fromJson({'data': response['data']});
+
+    return user;
+  }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:hungry/core/consts/app_colors.dart';
 
 class ProfileForm extends StatefulWidget {
   const ProfileForm({
@@ -10,10 +9,13 @@ class ProfileForm extends StatefulWidget {
     required this.emailController,
     required this.nameController,
     required this.addressController,
+    required this.formKey,
   });
+
   final TextEditingController emailController;
   final TextEditingController nameController;
   final TextEditingController addressController;
+  final GlobalKey<FormState> formKey;
 
   @override
   State<ProfileForm> createState() => _ProfileFormState();
@@ -49,50 +51,53 @@ class _ProfileFormState extends State<ProfileForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildAnimatedField(
-          index: 0,
-          child: _buildSectionTitle('Personal Information'),
-        ),
-        Gap(20.h),
-        _buildAnimatedField(
-          index: 1,
-          child: _buildEnhancedField(
-            controller: widget.nameController,
-            label: 'Full Name',
-            hint: 'Enter your name',
-            icon: CupertinoIcons.person_fill,
-            focusNode: _nameFocus,
-            keyboardType: TextInputType.name,
+    return Form(
+      key: widget.formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildAnimatedField(
+            index: 0,
+            child: _buildSectionTitle('Personal Information'),
           ),
-        ),
-        Gap(20.h),
-        _buildAnimatedField(
-          index: 2,
-          child: _buildEnhancedField(
-            controller: widget.emailController,
-            label: 'Email Address',
-            hint: 'Enter your email',
-            icon: CupertinoIcons.mail_solid,
-            focusNode: _emailFocus,
-            keyboardType: TextInputType.emailAddress,
+          Gap(20.h),
+          _buildAnimatedField(
+            index: 1,
+            child: _buildEnhancedField(
+              controller: widget.nameController,
+              label: 'Full Name',
+              hint: 'Enter your name',
+              icon: CupertinoIcons.person_fill,
+              focusNode: _nameFocus,
+              keyboardType: TextInputType.name,
+            ),
           ),
-        ),
-        Gap(20.h),
-        _buildAnimatedField(
-          index: 3,
-          child: _buildEnhancedField(
-            controller: widget.addressController,
-            label: 'Delivery Address',
-            hint: 'Enter your address',
-            icon: Icons.location_on_rounded,
-            focusNode: _addressFocus,
-            keyboardType: TextInputType.streetAddress,
+          Gap(20.h),
+          _buildAnimatedField(
+            index: 2,
+            child: _buildEnhancedField(
+              controller: widget.emailController,
+              label: 'Email Address',
+              hint: 'Enter your email',
+              icon: CupertinoIcons.mail_solid,
+              focusNode: _emailFocus,
+              keyboardType: TextInputType.emailAddress,
+            ),
           ),
-        ),
-      ],
+          Gap(20.h),
+          _buildAnimatedField(
+            index: 3,
+            child: _buildEnhancedField(
+              controller: widget.addressController,
+              label: 'Delivery Address',
+              hint: 'Enter your address',
+              icon: Icons.location_on_rounded,
+              focusNode: _addressFocus,
+              keyboardType: TextInputType.streetAddress,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -111,7 +116,7 @@ class _ProfileFormState extends State<ProfileForm> {
         Text(
           title,
           style: TextStyle(
-            fontSize: 20.sp,
+            fontSize: 18.sp,
             fontWeight: FontWeight.bold,
             color: AppColors.primary,
             letterSpacing: 0.5,
@@ -138,10 +143,7 @@ class _ProfileFormState extends State<ProfileForm> {
           decoration: BoxDecoration(
             color: Colors.grey[50],
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isFocused ? AppColors.primary : Colors.grey[300]!,
-              width: isFocused ? 2 : 1,
-            ),
+
             boxShadow: isFocused
                 ? [
                     BoxShadow(
@@ -152,56 +154,92 @@ class _ProfileFormState extends State<ProfileForm> {
                   ]
                 : [],
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 16, top: 12),
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: isFocused ? AppColors.primary : Colors.grey[600],
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-              TextFormField(
-                controller: controller,
-                focusNode: focusNode,
-                keyboardType: keyboardType,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                ),
-                decoration: InputDecoration(
-                  hintText: hint,
-                  hintStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontSize: 14.sp,
-                  ),
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.only(left: 12, right: 12),
-                    child: Icon(
-                      icon,
-                      color: isFocused ? AppColors.primary : Colors.grey[400],
-                      size: 22,
-                    ),
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    bottom: 12,
-                  ),
-                ),
-              ),
-            ],
+          child: ProfileTextField(
+            isFocused: isFocused,
+            controller: controller,
+            focusNode: focusNode,
+            label: label,
+            hint: hint,
+            icon: icon,
+            keyboardType: keyboardType,
           ),
         );
       },
+    );
+  }
+}
+
+class AppColors {
+  static const Color primary = Colors.blue;
+}
+
+class ProfileTextField extends StatelessWidget {
+  const ProfileTextField({
+    super.key,
+    required this.controller,
+    required this.focusNode,
+    required this.label,
+    required this.hint,
+    required this.icon,
+    this.keyboardType = TextInputType.text,
+    required this.isFocused,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final String label;
+  final String hint;
+  final IconData icon;
+  final TextInputType keyboardType;
+  final bool isFocused;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      focusNode: focusNode,
+      keyboardType: keyboardType,
+      style: TextStyle(
+        fontSize: 16.sp, // .sp requires flutter_screenutil package
+        fontWeight: FontWeight.w500,
+        color: Colors.black87,
+      ),
+      decoration: InputDecoration(
+        hintText: hint,
+        labelText:
+            label, // Use labelText instead of label for the floating effect
+        labelStyle: TextStyle(
+          color: isFocused ? AppColors.primary : Colors.grey[600],
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
+        ),
+        alignLabelWithHint: true,
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14.sp),
+        prefixIcon: Padding(
+          padding: const EdgeInsets.only(left: 12, right: 12),
+          child: Icon(
+            icon,
+            color: isFocused ? AppColors.primary : Colors.grey[400],
+            size: 22,
+          ),
+        ),
+        // Add BorderSide to make the border visible
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.grey.shade400, width: 1.0),
+        ),
+        floatingLabelAlignment: FloatingLabelAlignment.start,
+        // Add BorderSide for a different color/width when focused
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2.0),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16, // Increased padding for better visuals
+          horizontal: 0,
+        ),
+      ),
     );
   }
 }

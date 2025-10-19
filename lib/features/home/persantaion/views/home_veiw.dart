@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hungry/core/consts/app_colors.dart';
 import 'package:hungry/core/utils/responsive_helper.dart';
 import 'package:hungry/core/widgets/custom_snackbar.dart';
-import 'package:hungry/core/widgets/loading_widget.dart';
 import 'package:hungry/features/home/persantaion/cubit/product_cubit.dart';
 import 'package:hungry/features/home/persantaion/cubit/product_state.dart';
 import 'package:hungry/features/home/persantaion/widgets/home_content.dart';
 import 'package:hungry/features/home/persantaion/widgets/home_error.dart';
+import 'package:hungry/features/home/persantaion/widgets/home_loading.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -94,9 +94,7 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
             },
             builder: (context, state) {
               if (state is ProductLoading || state is ProductInitial) {
-                return const Center(
-                  child: LoadingWidget(variant: LoadingVariant.modern),
-                );
+                return HomeLoading(responsive: responsive);
               }
 
               if (state is ProductLoaded) {
