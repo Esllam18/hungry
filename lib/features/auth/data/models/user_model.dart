@@ -1,4 +1,4 @@
-// user_model.dart (updated address to nullable)
+// user_model.dart (updated with HTTPS fix)
 class UserModel {
   final String name;
   final String email;
@@ -16,19 +16,25 @@ class UserModel {
     this.visa,
   });
 
+  /// Helper method to convert http to https
+  static String? _ensureHttps(String? url) {
+    if (url == null || url.isEmpty) return url;
+    if (url.startsWith('http://')) {
+      return url.replaceFirst('http://', 'https://');
+    }
+    return url;
+  }
+
   factory UserModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as Map<String, dynamic>? ?? <String, dynamic>{};
 
     return UserModel(
-      name:
-          data['name']?.toString() ??
-          '', // Fallback to empty string if null; customize as needed (e.g., throw Exception).
+      name: data['name']?.toString() ?? '',
       email: data['email']?.toString() ?? '',
-      image: data['image']?.toString(),
+      image: _ensureHttps(data['image']?.toString()),
       token: data['token']?.toString(),
       address: data['address']?.toString(),
-      visa: data['Visa']
-          ?.toString(), // Note: API uses 'Visa' (capital V); adjust if lowercase.
+      visa: data['Visa']?.toString(),
     );
   }
 
@@ -39,7 +45,26 @@ class UserModel {
       'image': image,
       'token': token,
       'address': address,
-      'Visa': visa, // Match API casing for serialization.
+      'Visa': visa,
     };
+  }
+
+  /// Create a copy with updated fields
+  UserModel copyWith({
+    String? name,
+    String? email,
+    String? image,
+    String? token,
+    String? address,
+    String? visa,
+  }) {
+    return UserModel(
+      name: name ?? this.name,
+      email: email ?? this.email,
+      image: image ?? this.image,
+      token: token ?? this.token,
+      address: address ?? this.address,
+      visa: visa ?? this.visa,
+    );
   }
 }

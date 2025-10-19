@@ -4,10 +4,6 @@ import 'package:hungry/core/api/api_service.dart';
 import 'package:hungry/core/api/pref_helper.dart';
 import 'package:hungry/features/auth/data/models/user_model.dart';
 
-/// Data source for remote API calls.
-/// Calls ApiService and parses responses.
-/// Throw ApiError on failure – handle in Cubit.
-/// Modify to add more methods.
 class AuthRemoteDataSource {
   final ApiService _apiService = ApiService();
 

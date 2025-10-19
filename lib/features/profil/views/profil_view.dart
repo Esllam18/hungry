@@ -140,10 +140,12 @@ class _ProfilViewState extends State<ProfilView> with TickerProviderStateMixin {
                       child: Column(
                         children: [
                           Gap(20.h),
+
+                          // Replace the UserProfileImage widget call in profil_view.dart with this:
                           UserProfileImage(
                             imageUrl: (state is AuthSuccess)
-                                ? state.user.image.toString()
-                                : '',
+                                ? state.user.image
+                                : null,
                           ),
                           Gap(15.h),
                           Text(
