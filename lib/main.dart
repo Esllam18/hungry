@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hungry/core/router/app_router.dart';
-import 'package:hungry/features/auth/persantation/cubit/auth_cubit.dart';
-import 'package:hungry/features/home/persantaion/cubit/product_cubit.dart';
+import 'package:hungry/splash.dart';
 
-void main() {
-  runApp(const Hungry());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(
+    ScreenUtilInit(
+      designSize: const Size(375, 812),
+      builder: (context, child) => const Hungry(),
+    ),
+  );
 }
 
 class Hungry extends StatelessWidget {
@@ -14,23 +19,14 @@ class Hungry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(375, 812),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
-        return MultiBlocProvider(
-          providers: [
-            BlocProvider(create: (context) => AuthCubit()),
-            BlocProvider(create: (context) => ProductCubit()),
-          ],
-          child: MaterialApp.router(
-            title: 'Hungry',
-            debugShowCheckedModeBanner: false,
-            routerConfig: router,
-          ),
-        );
-      },
+    return MaterialApp(
+      title: 'Hungry App',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        splashColor: Colors.transparent,
+        scaffoldBackgroundColor: Colors.white,
+      ),
+      home: SplashView(),
     );
   }
 }

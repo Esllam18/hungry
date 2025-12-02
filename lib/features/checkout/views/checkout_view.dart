@@ -1,14 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hungry/core/consts/app_colors.dart';
-import 'package:hungry/core/utils/responsive_helper.dart';
-import 'package:hungry/core/widgets/custom_text.dart';
-import 'package:hungry/features/checkout/widgets/dialog_scauss.dart';
-import 'package:hungry/features/checkout/widgets/order_summary_section.dart';
-import 'package:hungry/features/checkout/widgets/payment_methods_section.dart';
-import 'package:hungry/features/home/persantaion/widgets/add_to_cart_and_total_price.dart';
+import 'package:hungry/core/constants/app_colors.dart';
+
+import 'package:hungry/features/checkout/widgets/order_details_widget.dart';
+
+import 'package:hungry/shared/custom_button.dart';
+import 'package:hungry/shared/custom_text.dart';
 
 class CheckoutView extends StatefulWidget {
   const CheckoutView({super.key});
@@ -17,165 +15,214 @@ class CheckoutView extends StatefulWidget {
   State<CheckoutView> createState() => _CheckoutViewState();
 }
 
-class _CheckoutViewState extends State<CheckoutView>
-    with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _fadeAnimation;
-  late AnimationController _checkboxController;
-  late Animation<double> _checkboxScaleAnimation;
-  String selectedPayment = 'cash';
-  bool checked = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeIn));
-
-    _checkboxController = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-
-    _checkboxScaleAnimation = Tween<double>(begin: 1.0, end: 0.85).animate(
-      CurvedAnimation(parent: _checkboxController, curve: Curves.easeInOut),
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _controller.forward();
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    _checkboxController.dispose();
-    super.dispose();
-  }
+class _CheckoutViewState extends State<CheckoutView> {
+  String selectedMethod = 'Cash';
 
   @override
   Widget build(BuildContext context) {
-    final responsive = Responsive(context);
-
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: AppColors.white,
-          elevation: 0,
-          centerTitle: true,
-          title: CustomText(
-            txt: 'Checkout',
-            fontSize: responsive.setFont(20),
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-          leading: GestureDetector(
-            onTap: () => GoRouter.of(context).pop(),
-            child: Icon(
-              Icons.arrow_back_ios,
-              size: responsive.setWidth(20),
-              color: AppColors.textPrimary,
-            ),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        scrolledUnderElevation: 0.0,
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Icon(Icons.arrow_back),
         ),
-        body: FadeTransition(
-          opacity: _fadeAnimation,
-          child: Stack(
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SingleChildScrollView(
-                padding: EdgeInsets.all(responsive.setWidth(20)),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Order Summary Section
-                    CustomText(
-                      txt: 'Order summary',
-                      fontSize: responsive.setFont(20),
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.secondary,
-                    ),
-
-                    Gap(responsive.setHeight(16)),
-
-                    OrderSummarySection(responsive: responsive),
-
-                    Gap(responsive.setHeight(32)),
-
-                    // Payment Methods Section
-                    CustomText(
-                      txt: 'Payment methods',
-                      fontSize: responsive.setFont(20),
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.secondary,
-                    ),
-
-                    Gap(responsive.setHeight(16)),
-
-                    PaymentMethodsSection(),
-
-                    // Save card details checker
-                    saveCardDetailsChecker(responsive),
-
-                    Gap(responsive.setHeight(150)),
-                  ],
-                ),
+              CustomText(
+                text: 'Order summary',
+                size: 20,
+                weight: FontWeight.w500,
               ),
-              Positioned(
-                left: responsive.setWidth(0),
-                right: responsive.setWidth(0),
-                bottom: responsive.setHeight(0),
-                child: AddToCartBtnAndTotalPrice(
-                  text: 'Pay Now',
-                  responsive: responsive,
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (context) => DialogScauss(),
+              Gap(10),
+              OrderDetailsWidget(
+                order: '18,5',
+                taxes: '3.50',
+                fees: '40.33',
+                total: '100.00',
+              ),
+              Gap(80),
+              CustomText(
+                text: 'Payment methods',
+                size: 20,
+                weight: FontWeight.w500,
+              ),
+              Gap(15),
+
+              /// Cash
+              ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                tileColor: Color(0xff3C2F2F),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 16,
+                ),
+                leading: Image.asset('assets/icon/cash.png', width: 50),
+                title: CustomText(
+                  text: 'Cash on Delivery',
+                  color: Colors.white,
+                ),
+                trailing: Radio<String>(
+                  activeColor: Colors.white,
+                  value: 'Cash',
+                  groupValue: selectedMethod,
+                  onChanged: (v) => setState(() => selectedMethod = v!),
+                ),
+                onTap: () => setState(() => selectedMethod = 'Cash'),
+              ),
+              Gap(10),
+
+              /// Debit
+              ListTile(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                tileColor: Colors.blue.shade900,
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 2,
+                  horizontal: 16,
+                ),
+                leading: Icon(CupertinoIcons.creditcard, color: Colors.white),
+                title: CustomText(text: 'Debit card', color: Colors.white),
+                subtitle: CustomText(
+                  text: '**** ***** 2342',
+                  color: Colors.white,
+                ),
+                trailing: Radio<String>(
+                  activeColor: Colors.white,
+                  value: 'Visa',
+                  groupValue: selectedMethod,
+                  onChanged: (v) => setState(() => selectedMethod = v!),
+                ),
+                onTap: () => setState(() => selectedMethod = 'Visa'),
+              ),
+              Gap(5),
+              Row(
+                children: [
+                  Checkbox(
+                    activeColor: Color(0xffEF2A39),
+                    value: true,
+                    onChanged: (v) {},
                   ),
-                ),
+                  CustomText(text: 'Save card details for future payments'),
+                ],
               ),
+              Gap(200),
             ],
           ),
         ),
       ),
-    );
-  }
 
-  GestureDetector saveCardDetailsChecker(Responsive responsive) {
-    return GestureDetector(
-      onTapDown: (_) => _checkboxController.forward(),
-      onTapUp: (_) {
-        _checkboxController.reverse();
-        setState(() {
-          checked = !checked;
-        });
-      },
-      onTapCancel: () => _checkboxController.reverse(),
-      child: Row(
-        children: [
-          ScaleTransition(
-            scale: _checkboxScaleAnimation,
-            child: Icon(
-              checked ? Icons.check_box_rounded : Icons.check_box_outline_blank,
-              color: AppColors.primary,
-              size: responsive.setWidth(24),
+      bottomSheet: Container(
+        height: 120,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade800,
+              blurRadius: 15,
+              offset: Offset(0, 0),
             ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(text: 'Total', size: 15),
+                  CustomText(text: '\$ 18.9', size: 24),
+                ],
+              ),
+
+              CustomButton(
+                text: 'Pay Now',
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Dialog(
+                        backgroundColor: Colors.transparent,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 200,
+                          ),
+                          child: Container(
+                            width: 300,
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.shade800,
+                                  blurRadius: 15,
+                                  offset: Offset(0, 0),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundColor: AppColors.primary,
+                                  child: Icon(
+                                    CupertinoIcons.check_mark,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                ),
+                                Gap(10),
+                                CustomText(
+                                  text: 'Success!',
+                                  weight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                  size: 20,
+                                ),
+                                Gap(3),
+                                CustomText(
+                                  text:
+                                      'Your payment was successful. \nA receipt for this purchase \nhas been sent to your email.',
+                                  color: Colors.grey.shade400,
+                                  size: 11,
+                                ),
+
+                                Gap(10),
+                                CustomButton(
+                                  text: 'Close',
+                                  width: 200,
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
           ),
-          Gap(responsive.setWidth(8)),
-          CustomText(
-            txt: 'Save card details for future payments',
-            fontWeight: FontWeight.w500,
-            fontSize: responsive.setFont(16),
-            color: AppColors.textPrimary,
-          ),
-        ],
+        ),
       ),
     );
   }
