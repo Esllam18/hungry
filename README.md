@@ -146,7 +146,23 @@
 dependencies:
   flutter:
     sdk: flutter
-  # Add your dependencies here
+  gap: ^3.0.1
+  dio: ^5.9.0
+  shared_preferences: ^2.5.3
+  get_it: ^7.6.4
+  google_fonts: ^6.1.0
+  go_router: ^16.0.0
+  dartz: ^0.10.1
+  quickalert: ^1.1.0
+  url_launcher: ^6.2.4
+  ionicons: ^0.2.2
+  font_awesome_flutter: ^10.6.0
+  flutter_screenutil: ^5.9.3
+  equatable: ^2.0.7
+  flutter_svg: ^2.2.1
+  flutter_bloc: ^9.1.1
+  cached_network_image: ^3.4.1
+  skeletonizer: ^2.1.1
 ```
 
 ---
